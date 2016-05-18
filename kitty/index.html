@@ -1,0 +1,128 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+<script src="jquery.js"></script>
+
+<style>
+.container {
+
+}
+
+.bg {
+	text-align: center;
+	font-family: sans-serif;
+
+}
+
+.glasses {
+	position: relative;
+	top: 80%;
+	margin-top: 15%;
+	margin-left: 5%;
+	width: 25%;
+	-webkit-transform: rotate(7deg); /* Chrome, Safari, Opera */
+    transform: rotate(-7deg);
+    opacity: 0;
+}
+
+.glassesopa{
+
+    opacity: 1;
+}
+
+.kitten {
+	position: absolute;
+	margin: 0 auto;
+	width: 40%;
+	left: 30%;
+}
+
+.kitty-anim {
+	transition: 0.01s all;
+	-webkit-animation: kitten-hue 0.4s infinite;
+
+}
+
+.bg-anim {
+	transition: 0.01s all;
+	-webkit-animation: bg-switch 0.4s infinite;
+
+}
+
+
+@-webkit-keyframes kitten-hue {
+  0%  { -webkit-filter: hue-rotate(230deg); }
+  10%  { -webkit-filter: hue-rotate(90deg) invert(1); }
+  20%  { -webkit-filter: hue-rotate(90deg); }
+  30%  { -webkit-filter: hue-rotate(230deg); }
+  40%  { -webkit-filter: hue-rotate(130deg); }
+  50%  { -webkit-filter: hue-rotate(40deg) invert(1); }
+  60%  { -webkit-filter: hue-rotate(180deg); }
+  70%  { -webkit-filter: hue-rotate(210deg); }
+  80%  { -webkit-filter: hue-rotate(90deg) invert(1); }
+  90%  { -webkit-filter: hue-rotate(230deg); }
+  100%  { -webkit-filter: hue-rotate(110deg); }
+}
+
+@-webkit-keyframes bg-switch {
+	0%  { background-color: #ffffff; color: #000000;}
+	10%  { background-color: #000000; color: #ffffff;}
+	20%  { background-color: #ffffff; color: #000000;}
+	30%  { background-color: #000000; color: #ffffff;}
+	40%  { background-color: #ffffff; color: #000000;}
+	50%  { background-color: #000000; color: #ffffff;}
+	60%  { background-color: #ffffff; color: #000000;}
+	70%  { background-color: #ffffff; color: #000000;}
+	80%  { background-color: #000000; color: #ffffff;}
+	90%  { background-color: #ffffff; color: #000000;}
+	100%  { background-color: #000000; color: #ffffff;}
+
+	}
+
+
+
+</style>
+  <meta charset="utf-8">
+
+  <title>Little Kitten Sounds</title>
+  <meta name="description" content="kitten sounds">
+  <meta name="author" content="kitten sounds">
+
+  <link rel="stylesheet" href="css/styles.css?v=1.0">
+
+  <!--[if lt IE 9]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+</head>
+
+<body class="bg">
+<h1>RELAXING KITTEN SOUNDS</h1>
+<h1 id="buttonplay">CLICK ON THIS CUTE LITTLE KITTEN</p>
+<audio id="audio" loop>
+    <source src="song.ogg" type="audio/ogg" />
+    <source src="song.mp3" type="audio/mp3" />
+</audio>
+
+<div style="width: 90%"><img  id="buttonplay" class="kitten" src="kitten.png" />
+<img class="glasses" src="glasses.png" /></div>
+  <script src="js/scripts.js"></script>
+
+  <script>
+  $( "#buttonplay" ).click(function() {
+  $( ".kitten").toggleClass( "kitty-anim" );
+  $( ".bg").toggleClass( "bg-anim" );
+   $( ".glasses").toggleClass( "kitty-anim" );
+   $( ".glasses").toggleClass( "glassesopa" );
+
+  if ($("audio").get(0).paused == false) {
+      $("audio").get(0).pause();
+  } else {
+      $("audio").get(0).play();
+  }
+});
+
+
+  </script>
+</body>
+</html>
