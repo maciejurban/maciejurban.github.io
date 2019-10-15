@@ -64,6 +64,13 @@ h4 {
   margin-block-end: 0;
 }
 
+section {
+  margin-top: 1em;
+}
+
+section hr {
+   margin-top: 1em;
+}
 
 section p {
   margin-top: 0em;
