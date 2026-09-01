@@ -1,8 +1,16 @@
 name: Deploy to GitHub Pages
 
+# Manual only, on purpose.
+#
+# The 2021 portfolio is the site currently served at maciejurban.github.io, from
+# the `master` branch. This rework lives on `main` and must not publish over it
+# by accident, so there is no push trigger: deploying is an explicit action.
+#
+# To publish this site:
+#   1. gh workflow run deploy.yml --ref main
+#   2. switch Pages to the Actions build (Settings → Pages → Build: GitHub Actions)
+# To go back to the 2021 site: switch Pages back to "Deploy from a branch" → master.
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 # Allow GITHUB_TOKEN to deploy to Pages.
