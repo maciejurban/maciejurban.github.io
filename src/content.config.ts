@@ -61,7 +61,8 @@ const essays = defineCollection({
     relatedCases: z.array(reference('cases')).default([]),
     status: statusSchema,
     /** Minutes. Computed from the body at build time when absent. */
-    readingTime: z.number().int().positive().optional(),
+    /* nullish, not optional: Keystatic writes `null` for an empty integer. */
+    readingTime: z.number().int().positive().nullish(),
   }),
 });
 
@@ -70,7 +71,7 @@ const site = defineCollection({
   loader: glob({ pattern: '**/*.mdx', base: './src/content/site' }),
   schema: z.object({
     title: z.string(),
-    description: z.string().optional(),
+    description: z.string().nullish(),
     status: statusSchema.default('published'),
   }),
 });
