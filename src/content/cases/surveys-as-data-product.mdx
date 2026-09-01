@@ -24,63 +24,190 @@ summary: >-
 updated: 2026-09-01
 ---
 
-<Beat n={2} title="The base model">
+<Beat n={2} title="Surveys are workflows">
 
-TK — how the system works before this project touched it. Name the entities and
-the single rule that governs them. Minimal prose; the diagram carries the load.
+A survey looks like a form with a send button, and almost nothing about running
+one at company scale behaves that way. There is the definition and there are its
+runs, which are different objects with different lifetimes. There is who may
+create and who may see results, which are different permissions and are
+constantly mistaken for one another. There are anonymity thresholds, below which
+results must not be shown at all. There is recurrence, which turns a single
+artefact into a series that has to stay comparable with itself.
 
-<Artifact caption="TK — the base model: entities, and the rule that governs them." ratio="16/9" />
+Each of those is a state machine. None of them is visible if the mental model is
+a form.
 
-</Beat>
+The anonymity threshold is the clearest example. Below it, results exist and
+must not be shown, which is a different state from having no results yet and a
+different state again from the run not having closed. Three situations, one
+empty screen, unless the product is built to tell them apart. Get that wrong and
+an administrator concludes that nobody answered, which is both false and exactly
+the kind of false that erodes confidence in the instrument.
 
-<Beat n={3} title="The failure that made the project">
-
-TK — the specific moment the base model stopped telling the truth. One incident,
-described concretely enough that the reader can picture it happening to them.
-
-</Beat>
-
-<Beat n={4} title="The model that resolved it">
-
-TK — the centerpiece. What changed in the model, not in the interface.
-
-<Artifact caption="TK — the resolved model. This is the artifact the case is built around." ratio="4/3" />
-
-<Pullquote>
-
-TK — the one sentence a reader should still have in their head a week later.
-
-</Pullquote>
+The setup this replaced was a multi-step wizard, and the general point is worth
+stating without reference to how it came to exist: a wizard optimizes the first
+pass. Administrative software has to optimize the return — coming back,
+inspecting something, changing one subsection, leaving.
 
 </Beat>
 
-<Beat n={5} title="Exception flows">
+<Beat n={3} title="The measurement problem">
 
-TK — two or three, never all of them. Each one is a place where the model has to
-decide something the happy path never asks it.
+The same question shows up in three contexts, at volumes that are not remotely
+alike. The shape of a typical week at this scale, offered as illustration rather
+than as anything observed: whole-company recurring listening produces on the
+order of a hundred-plus answers; onboarding produces a handful, from people who
+are a fortnight in and in honeymoon mode; a one-off campaign produces a few
+dozen, from people who selected themselves into it by caring about the topic.
 
-1. **TK** — TK
-2. **TK** — TK
-3. **TK** — TK
+Average those together and the chart comes out clean, and lies. The clean part
+is the problem. None of the three inputs is the thing the blended number claims
+to be: one is close to a population sample, one is a biased sample of a biased
+moment, and one is self-selected. The average has no referent in the world. It
+is a number about the arithmetic, not about the company.
 
-<Aside>
-
-TK — the counter-argument. Why a reasonable person would have modelled this differently, and what that would have cost instead.
-
-</Aside>
-
-</Beat>
-
-<Beat n={6} title="What shipped and what it did">
-
-TK — what actually reached users, and what changed as a result. Every number
-here gets traced to a verified source in Phase 3; unverifiable numbers get cut
-rather than softened.
+Small organizations pay for this twice. They make decisions on noise, and then
+they lose trust in the instrument the first time a number moves without anything
+having changed in the actual workplace. The second cost is the expensive one,
+because it is not recoverable by fixing the chart.
 
 </Beat>
 
-<Beat n={7} title="What I'd do differently" final={true}>
+<Beat n={4} title="The architecture">
 
-TK — something real, not a humblebrag in the shape of a regret.
+Questions are the unit of measurement. Surveys are delivery contexts, not
+containers. Same question text means the same measurement anywhere it appears,
+which is what makes any comparison across contexts legitimate in the first
+place.
+
+The rules that hold that together are small and unglamorous. Once a question has
+answers, its text is locked; editing produces a new version rather than
+rewriting history under the answers already given. Without that rule, a
+seemingly harmless wording change turns every historical answer into a response
+to a question nobody was asked, and the trend line that runs through it becomes
+a chart of two different things drawn as one. All scale questions run in
+one direction, five is positive, and there are no inverted items — reverse-coded
+questions are a research convention that buys a little response-bias control and
+costs every downstream consumer a correctness trap. Tags organize the library, because a question genuinely belongs to several
+topics at once and a tree would force a false choice about which one is primary.
+Dimensions exist only in the recurring pulse context, where a stable question set
+measured repeatedly over time makes the extra structure worth its cost, and
+nowhere else. Applying dimensions everywhere was the obvious generalization and
+would have meant maintaining a taxonomy for contexts that never produce enough
+data to populate it.
+
+Then there is what production settled on, which is stronger than the rule the
+design started with. Sources are never merged into one number, and they are
+fully comparable: a score per source, results plotted per source, side by side.
+Compare freely, never merge. Attribution is never lost, so a number on a chart
+can always answer the question of who was asked, when, and in what context.
+
+<Artifact caption="The three-tier model: question library, surveys as delivery contexts, answers grouped by source. An interactive version of this existed — click a tier to focus it — and needs rebuilding." ratio="4/3" />
+
+</Beat>
+
+<Beat n={5} title="What was cut, and where the model stops">
+
+Cut on purpose: dimensions in every survey type, event-triggered journeys,
+automatically blended cross-source trends, question-rotation machinery. The
+blended trends are the interesting omission, because they are the feature a
+buyer would ask for and the one the architecture exists to refuse.
+
+Question rotation is the one I would expect to come back. Rotating a subset of
+questions each cycle is how you keep a recurring survey short without shrinking
+the question set, and the price is that each cycle measures a slightly different
+thing. That trade is worth making at a scale where fatigue is the binding
+constraint, and it is not worth making before then, when comparability is what
+the product is trying to establish in the first place.
+
+Where the model stops working is easier to state than most people state it.
+Above roughly a thousand employees, asking everyone everything stops being
+viable and you need matrix sampling. Multi-country needs translations and, with
+them, per-locale measurement integrity, which is a harder problem than
+translation. Enterprise needs benchmarks, role-based access, and a per-answer
+audit trail.
+
+One thing shrank in contact with reality. The design called for three survey
+types. In production the journey type collapsed into a simple one-off survey
+sent by a separate feature, and integration by sending turned out to be
+sufficient. One primitive fewer than designed, which is the direction a design
+should be wrong in.
+
+</Beat>
+
+<Beat n={6} title="The builder">
+
+The argument that settles the interface is not about efficiency. HR has to
+validate the whole process before sending. The survey goes to the entire
+company, it cannot be recalled, and what is on the line is everyone's confidence
+that the person who sent it knew what they were doing. Someone who has to be
+certain needs to see the whole thing at once. A wizard shows one step and hides
+the rest, and so does splitting build, cycles and send into separate paths. The
+interface follows from where the irreversible moment sits in this product.
+
+So the builder is itself the summary. Each card carries the state of one part of
+the survey — configured, incomplete, or not applicable to this type — and is
+also the entry point to editing it, with sub-views opening for detail. Nothing
+sits behind a sequence, so the check before sending is a single read of one
+screen rather than a walk back through five.
+
+<Artifact caption="The card builder: each card shows the state of one part of the survey and opens a sub-view for detail, so the whole configuration is legible at once." ratio="16/9" />
+
+The honest limits matter here. Testing showed that navigation is not a problem.
+That is a narrow finding and it should be read narrowly. It says nothing about
+whether people understand what they configured, or whether they could
+reconstruct their own intent a month later, which is the thing that actually
+determines whether a recurring survey stays coherent. The open risk is that
+people habituated to other builders find this confusing precisely because it
+does not march them through.
+
+The cost of the path is not in doubt and neither is the choice. There is no
+prior art to copy here, hard moments are likely, and the beaten track would have
+been easier. That is what the choice forgoes, and it was taken anyway.
+
+Worth noting once: this card pattern now appears in two products, a year apart.
+That makes it a pattern rather than a one-off.
+
+### The AI layer, parked
+
+The AI layer is a concept and nothing more. It is unimplemented and held on EU
+regulatory grounds, and the permission model — what an assistant may change and
+what it may not — is exactly the open question rather than an implementation
+detail to settle later. AI systems used in employment decisions fall under
+high-risk classification, and this is precisely that domain.
+
+### The library, and what the recurring pulse is for
+
+The question library is in build and currently stalled on staffing: the team is
+on the builder and on maintenance first. In the meantime [[PRODUCT:pulse]], the
+recurring survey, is treated as a place to collect data between cycles, and the
+cycles themselves as proto-sources.
+
+The order is inverted from the obvious one. Rather than design the library and
+then go looking at the data, collect within a controlled range first, so that
+what the library has to deliver is derived from views someone actually needed.
+
+</Beat>
+
+<Beat n={7} title="Where this stands" final={true}>
+
+The substrate argument was won. Questions are the unit, sources stay attributed,
+and the rules that make comparison legitimate are in the product rather than in
+a document about the product. The substrate is now waiting on people: the
+library is stalled on staffing, and the assistant that motivated the whole thing
+is parked on regulatory grounds.
+
+That is the honest end state, and it is not a regret. The thing worth watching
+is whether an architecture whose payoff is deferred can survive a long enough
+wait — because the value of a substrate is not visible until something is built
+on top of it, and nothing has been yet.
+
+{/*
+  [TK — what I'd do differently]
+
+  No answer to this was given in the source interview, and inventing a regret
+  here would be the easiest and worst thing to do in the whole case. The beat
+  ends on the open state instead. Replace when there is a real answer.
+*/}
 
 </Beat>
