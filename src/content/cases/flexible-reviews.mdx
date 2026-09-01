@@ -24,63 +24,197 @@ summary: >-
 updated: 2026-09-01
 ---
 
+## The bet
+
+The bet was consolidation, not features. [[ORG]] had several separate things —
+360s, reviews, signatures, renaming — and customers were bending them to get
+what they actually wanted: signatures on a 360, a renamed 360, transitions
+between one type and another. The decision was that one configurable system is
+easier to maintain than five rigid ones.
+
+The stake was every existing customer. This replaced a system that people ran
+legally and financially consequential processes on. In France a performance
+review is a legally required document, so the thing being replaced was not a
+screen. It was an obligation someone had already met.
+
+A year to beta. Eighteen months to leave it. Four to five people. That is not
+delay; it is what replacing a load-bearing system costs when you may not break
+a single in-flight process.
+
 <Beat n={2} title="The base model">
 
-TK — how the system works before this project touched it. Name the entities and
-the single rule that governs them. Minimal prose; the diagram carries the load.
+A campaign runs in stages: responses, then a review meeting made of
+preparations, the meeting itself and a summary, then signatures. The people are
+a reviewee, a manager, peers, a note-taker and a review supervisor. Visibility
+is controlled per question, so for each question you decide what each reviewer
+can see. Campaign dates drive step dates, which means the state of a review
+depends on the calendar as much as on what anyone has done.
 
-<Artifact caption="TK — the base model: entities, and the rule that governs them." ratio="16/9" />
+<Artifact caption="The base model: campaign stages, the five roles, and the per-question visibility matrix that sits across them." ratio="16/9" />
+
+### The primitive
+
+My contribution to this was a reduction. A step is a form, a set of users, and
+permissions. Before, a step was a stage you pass through. After, it is an object
+with structure, and objects with structure compose. The team then built more on
+that abstraction than I designed: reminders that hang off steps, further
+mechanisms on the same shape.
+
+The reduction is what kills the wizard. A wizard has to ask about everything at
+campaign level — define the reminders for the campaign, define who sees what for
+the campaign — because it has nowhere else to put the question. When a step is
+self-contained, each question gets asked where it makes sense. Pick the form.
+Pick who. Pick what they see. Next step. Configuration stops being a
+questionnaire about the system and becomes a description of the process.
+
+The test an abstraction has to survive is the degenerate case. Signatures are
+just a checkbox. They still have a form, still have users, still have
+permissions, still the same object. Most abstractions fail that test.
 
 </Beat>
 
-<Beat n={3} title="The failure that made the project">
+<Beat n={3} title="The scene that reframed the project">
 
-TK — the specific moment the base model stopped telling the truth. One incident,
-described concretely enough that the reader can picture it happening to them.
+There was no incident and no escalation. The team's method was to write out
+every case they could imagine and then go and research whether those cases
+actually occur. This one they found on Slack. Someone changed a skill and
+mentioned it in passing. Everyone saw the message, went to check their own
+reviews, and found descriptions that were not the ones they had answered
+against.
+
+Nothing was broken. The system did exactly what it had been built to do: show
+the current definition of the skill. What surfaced was a missing theory of time.
+
+The reframe came from that. A review is not a screen to fill in. It is a
+document about how someone did their work over three months, and it may matter
+later — to the employee, to the employer, in a dispute, and in France as a legal
+requirement. A document like that is amended, not overwritten. "Just update it
+to the latest data" stops being a convenience and becomes falsification.
+
+The inversion is worth sitting with, because it runs against the instinct of
+nearly every system anyone has built: normally fresher data is better data. Here
+fresher data destroys the value of the record. And the rule that follows is
+about people, not merge strategies. A discrepancy is a problem for a person to
+resolve, not a change that should enter the review by itself.
 
 </Beat>
 
-<Beat n={4} title="The model that resolved it">
+<Beat n={4} title="The reconciliation model">
 
-TK — the centerpiece. What changed in the model, not in the interface.
+The model that came out of it has four moves. Snapshot the answers against the
+definitions they were written for. Detect the diff when a definition moves.
+Route that diff to a permission that can understand it, because the person who
+can judge whether a changed skill description still describes the same work is
+not always the person looking at the screen. Then resolve, and resolution has
+three outcomes rather than one: some diffs apply safely, some invalidate
+preparations that have already been written, and some cannot be applied at all,
+because the skill or the level they referred to no longer exists.
 
-<Artifact caption="TK — the resolved model. This is the artifact the case is built around." ratio="4/3" />
+That third outcome is the one that forces the design to be honest. There is no
+correct automatic answer to a question whose subject has been deleted, so the
+system has to be able to hold a review in a state that says so.
+
+<Artifact caption="The reconciliation model: snapshot, diff detection, routing by permission, and the three resolution outcomes — applies cleanly, invalidates preparations, cannot be applied." ratio="4/3" />
+
+</Beat>
+
+<Beat n={5} title="The combinatorial chain">
+
+Beta customers asked for something small and reasonable. Steps should close
+themselves once they are filled, instead of waiting for an admin to close them.
+Manual closing looked like friction.
+
+It was not friction. It was a checkpoint. The admin closing the step was also,
+incidentally, the human verifying that the state was sane.
+
+Walk the consequence and it is short, which is the argument. The step closes
+itself, so skills apply with no human in the loop. A source change can now land
+while nobody is looking. So the system has to detect that a form has gone stale.
+So it has to tell the note-taker. The note-taker can see the problem and has no
+permission to fix it. So the copy has to route to the admin. So you need a
+distinct stale state, an escalation path, and copy that does not dead-end.
+
+One beta request. Five new exceptions, each one a consequence of the last.
 
 <Pullquote>
 
-TK — the one sentence a reader should still have in their head a week later.
+When you remove a manual step, you remove the person who was also keeping the
+state honest, and you have to rebuild that supervision in the system or it is
+simply gone.
 
 </Pullquote>
 
-</Beat>
+<Artifact caption="The stale-state escalation: what the note-taker sees, what they can and cannot act on, and the route to the admin who can." ratio="16/9" />
 
-<Beat n={5} title="Exception flows">
+This is where the project's effort actually went. The team's own estimate is
+that exceptions accounted for roughly two thirds of the work — an estimate, not
+a measurement, and worth treating as one. The happy path was never the expensive
+part.
 
-TK — two or three, never all of them. Each one is a place where the model has to
-decide something the happy path never asks it.
+### The boundary not crossed
 
-1. **TK** — TK
-2. **TK** — TK
-3. **TK** — TK
+Almost every exception was handled. One was not. You cannot reopen a closed
+review and annex a change to it. In production, closed is closed.
 
 <Aside>
 
-TK — the counter-argument. Why a reasonable person would have modelled this differently, and what that would have cost instead.
+This is neither a clean decision nor pure debt. It is a frozen debate. There are
+concepts on the table — skill version history producing snapshots, editing past
+entries — and each one opens a further class of problems: how to handle editing
+an edit, who is permitted to annex, what happens to signatures already on the
+document. A team of four could not take that on while trying to leave beta.
 
 </Aside>
+
+The motive for wanting it is not customer convenience. The model should reflect
+the truth, and a person should be able to understand why their skill looks
+different today than it did in a review six months ago. An unexplained gap in
+the record is itself the problem.
+
+The concept is more interesting than a workaround, so it is worth naming
+properly. Do not edit the closed review. Read its skill snapshot, create a new
+review on the old versions, and append a history entry dated today as an annex.
+The original stays untouched, the correction is a separate document, and
+subsequent changes accept onto the annex. Accounting does this with reversing
+entries. Law does it with contract amendments.
 
 </Beat>
 
 <Beat n={6} title="What shipped and what it did">
 
-TK — what actually reached users, and what changed as a result. Every number
-here gets traced to a verified source in Phase 3; unverifiable numbers get cut
-rather than softened.
+Of the organizations given the beta, 70 to 80% adopted it. The only blocker is
+missing feature parity. Not the model, not comprehension, not resistance.
+
+Those two facts together say something fairly precise. The model works, and the
+cost of the model was that building a new engine obliged the team to rebuild
+everything that had grown around the old one: reminders, bulk actions, reports,
+migrations, combined views. Things the previous system simply had.
+
+Not all of it was recreation. New capability shipped alongside — better data
+visualization, filtering that did not exist before, process-flow construction,
+higher-level access management for reviews, administrators and viewers, control
+of the review flow between steps, step renaming.
+
+The volume of work exceeded what the team can deliver, and the project
+continues.
 
 </Beat>
 
 <Beat n={7} title="What I'd do differently" final={true}>
 
-TK — something real, not a humblebrag in the shape of a regret.
+Given the resources the team actually has, I would not have replaced the engine.
+Take the scattered types that already exist — legacy campaign, 360, 1:1, review
+with preparations — leave them where they are, and wrap them in a layer that
+solves what was genuinely missing: sending, and combining the results.
+Consolidate at the orchestration and data layer instead of underneath.
+
+There is a rhyme for this in the surveys product, where the journey type
+collapsed into a one-off survey sent by a separate feature. Integration by
+sending turned out to be enough, and the separate type proved unnecessary.
+
+The decision to build a new engine was an architectural one, taken outside
+design. Its cost surfaced only at the scale of a year, which is the scale at
+which "we will rebuild the surrounding features as we go" stops being a plan and
+becomes the project.
 
 </Beat>
