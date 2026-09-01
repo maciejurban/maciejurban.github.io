@@ -22,63 +22,70 @@ summary: >-
 updated: 2026-09-01
 ---
 
-<Beat n={2} title="The base model">
+The proposal was to collapse proficiency into a simpler rating. On its face that
+is a simplification, and simplifications in an evaluation product usually
+deserve a hearing, because every additional level is a level that managers have
+to apply consistently across a whole team and across each other.
 
-TK — how the system works before this project touched it. Name the entities and
-the single rule that governs them. Minimal prose; the diagram carries the load.
+This one changed what was being measured.
 
-<Artifact caption="TK — the base model: entities, and the rule that governs them." ratio="16/9" />
+Two questions live underneath a proficiency rating, and they are not the same
+question:
 
-</Beat>
+1. **Does this person meet the current expectation for this position?**
+2. **What is this person's actual proficiency in this skill?**
 
-<Beat n={3} title="The failure that made the project">
+The first is bounded by the position model, and it cannot see below the
+requirement, because everything below the requirement resolves to the same
+answer. A person one step short and a person four steps short become
+indistinguishable. That removes exactly the two things an organization most
+wants from skill data: where the gaps are, and whether they are closing.
 
-TK — the specific moment the base model stopped telling the truth. One incident,
-described concretely enough that the reader can picture it happening to them.
+There is a second structural difference, and it shows up over time. Proficiency
+is a property of the person. Meeting the expectation is a relation between the
+person and a position, so it moves when the position moves. Promote someone and
+the position-relative reading drops, though nothing about their skill has
+changed; rewrite a position's requirements and every historical rating attached
+to it silently means something new. One of these two measurements is stable
+enough to build a trend line on. The other is not, and it will not announce
+which of the two things changed.
 
-</Beat>
+The next effect is slower and harder to reverse. Asking the position question
+repeatedly trains assessors to normalize against the position model rather than
+against the skill itself. "Good enough" quietly becomes the unit of measurement.
+After a year of that, the organization is holding a compliance dataset with a
+skill dataset's name on it, and there is no way to tell the two apart from the
+inside.
 
-<Beat n={4} title="The model that resolved it">
+<Artifact caption="The two questions resolving to one model: the position-relative question used in a lightweight round, and the proficiency selection used in a formal review." ratio="16/9" />
 
-TK — the centerpiece. What changed in the model, not in the interface.
+The fix does not require choosing between them. Put the semantics at the
+question level. A lightweight 360 asks whether someone is at the expected level
+for their position, which is cheap to answer and appropriate for frequent,
+low-stakes rounds. A formal review selects the specific proficiency, with full
+context in front of the assessor. Same architecture underneath, different
+questions on top, and every answer carries the meaning of the question that
+produced it.
 
-<Artifact caption="TK — the resolved model. This is the artifact the case is built around." ratio="4/3" />
-
-<Pullquote>
-
-TK — the one sentence a reader should still have in their head a week later.
-
-</Pullquote>
-
-</Beat>
-
-<Beat n={5} title="Exception flows">
-
-TK — two or three, never all of them. Each one is a place where the model has to
-decide something the happy path never asks it.
-
-1. **TK** — TK
-2. **TK** — TK
-3. **TK** — TK
+The pressure behind the original request was real. A full ladder is expensive to
+answer honestly, and people asked to do expensive things at volume will find a
+way to do them cheaply. But that cost is an incentive problem, and the ladder is
+the measurement. Do not solve an incentive problem by corrupting the
+measurement. If the organization wants to ask a lower-stakes question, name that
+question explicitly and record which question was asked.
 
 <Aside>
 
-TK — the counter-argument. Why a reasonable person would have modelled this differently, and what that would have cost instead.
+Simpler constructs are sometimes legitimately right. A short scale is a
+defensible instrument, and demanding precision that assessors cannot supply
+produces confident numbers with nothing behind them. The failure mode here is
+narrower than "simplification is bad". It is hiding information while presenting
+the result as the same measurement. A shorter scale that everyone understands to
+be a shorter scale is fine. A shorter scale labelled as proficiency is not.
 
 </Aside>
 
-</Beat>
-
-<Beat n={6} title="What shipped and what it did">
-
-TK — what actually reached users, and what changed as a result. Every number
-here gets traced to a verified source in Phase 3; unverifiable numbers get cut
-rather than softened.
-
-</Beat>
-
-<Beat n={7} title="What I'd do differently" final={true}>
-
-TK — something real, not a humblebrag in the shape of a regret.
-
-</Beat>
+The concept was accepted for implementation and is queued. The outcome is not
+really a feature. It is that the data still means what it means, and whoever
+builds this later will not have to unwind a shortened semantics that has already
+collected a year of answers underneath it.
