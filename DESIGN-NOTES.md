@@ -346,3 +346,36 @@ sequence of states, and the interesting design work is at the transitions.
   disallow and a `noindex` meta keep them out of search results until the copy
   is real. One flag, flipped in Phase 3.
 - **The slug is the filename**, not a frontmatter field, so it cannot drift.
+- **Two cases are `published`, not all five `draft`.** §5 says every case is a
+  draft, but §8 requires a case-study page in `dist` — "all ten routes
+  reachable", and a Lighthouse score for a case page, which cannot be measured
+  on a page that was filtered out of the build. One full case and one mini case
+  are published so both variants are exercised in production; three stay drafts,
+  along with one essay, so the filter is demonstrably doing something. The
+  `noindex` flag above is what makes publishing placeholder copy safe.
+- **`build.format: 'file'`, not `'directory'`.** With directory output GitHub
+  Pages 301-redirects `/work` → `/work/`, and every link on the site is written
+  without a trailing slash. `file` output makes Pages serve `/work` directly.
+  The cost is that `Astro.url.pathname` gains a `.html` in the build but not in
+  dev, which `normalisePath()` in src/lib/links.ts strips before anything
+  publishes or compares a path.
+- **`<Aside>` and `<Pullquote>` must be written as block elements** — tag on its
+  own line, blank line around the content. On one line, MDX parses them as
+  inline JSX and Keystatic (which declares them as block wrappers) refuses to
+  open the entry.
+
+---
+
+## 7. Verified
+
+Measured on the deployed site, not asserted:
+
+- Lighthouse on `/work/flexible-reviews`: **performance 99, accessibility 100,
+  best practices 100**. The only remaining flags are GitHub Pages' own
+  cache-control headers, which are not configurable on Pages.
+- All ten routes return 200 with no redirect hop. Draft entries and
+  `/keystatic` return 404.
+- Zero `<script>` tags and zero `.js` files in `dist`. Total CSS 5 KB.
+- No horizontal overflow at 360px.
+- Heading order h1 → h2 with no skips; `main`, `article`, `nav`, `header` and
+  `footer` landmarks all present with labelled navs.

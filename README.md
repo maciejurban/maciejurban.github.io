@@ -109,6 +109,20 @@ status: published
 
 Essays may use `<Aside>` and `<Pullquote>`.
 
+**Write them as block elements** — tag on its own line, blank line around the
+content:
+
+```mdx
+<Aside>
+
+The counter-argument.
+
+</Aside>
+```
+
+On a single line, MDX parses them as inline JSX and Keystatic refuses to open
+the entry ("mdxJsxTextElement has unexpected children").
+
 ## Drafts
 
 `status: draft` items render in `npm run dev` and are absent from `npm run
