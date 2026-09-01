@@ -21,17 +21,203 @@ summary: >-
 updated: 2026-09-01
 ---
 
-TK — one or two paragraphs of setup. What was actually asked for, and why every
-individual version of the request was reasonable on its own terms.
+I was hired for this as a 0→1 project. I invented [[PRODUCT:careershub]] and I
+designed it.
 
-<Artifact caption="TK — the one artifact that makes the point without a paragraph of explanation." ratio="16/9" />
+<Beat n={2} title="The problem">
 
-TK — what the accumulation produced, and the decision that followed from it.
-Short-form, so this is the whole middle of the case: no beat scaffolding, one
-turn of the argument.
+The old builder let customers do anything, and a great many of them had. The
+volume of custom code written against it was enormous, so every platform change
+risked breaking a live career site. That produced an endless support load and a
+recurring argument, because customers who had built custom did not accept that
+building custom meant owning the breakage.
+
+The mechanism underneath is worth naming, because it is not specific to careers
+sites. Once customers write code against your markup, your markup becomes an
+interface. You never designed it as one, you never versioned it, and you cannot
+test against it, because the code that depends on it lives somewhere you cannot
+see. Every release turns into a compatibility question with no way to answer it
+in advance.
+
+That is also why the argument with customers never resolved. They experienced it
+as the platform breaking their site. The team experienced it as customer code
+depending on something nobody had promised. Both descriptions are accurate, and
+neither one gives anybody a next move.
+
+This is what unbounded flexibility actually costs. It does not arrive as one bad
+decision. It arrives as a permanent tax on every subsequent release.
+
+</Beat>
+
+<Beat n={3} title="Constrained composition, not a canvas">
+
+There was no budget for real section editing. That constraint decided the shape
+of the answer, and it produced a better product than the budget would have. The
+obvious way to spend money on a page builder is to make the canvas better. The
+constraint forced a different question: what is the smallest set of moves that
+covers what customers actually make?
+
+Each section offers two or three ready layouts. Inside a section there is a
+swappable primary element — heading at the top, on the left, on the right, or
+absent — and because it is WYSIWYG, swapping it also replaces the text. The
+customer is therefore never handed an empty field to fill; every choice is
+between things that already look finished.
+
+Below that sits a swappable main block, itself configurable: galleries with
+presets, job sections rendered as a table or as cards, cards with or without a
+description or a button, a configurable application form, control over which
+details appear where.
+
+Elements carry smart actions rather than raw controls. Enlarge this image.
+Change the grid. Let this image take a two-by-two and reflow the rest around it.
+The difference matters more than it looks. A raw control asks the customer to
+hold the layout in their head and express an intention as a number. A smart
+action states the intention and leaves the layout to the system, which is the
+only reason a bounded builder can feel quicker than a free one instead of merely
+safer. Safety on its own loses to freedom every time. Speed plus safety does not.
+
+Defaults reinforce the same thing by always doing what you would have chosen
+anyway. Over the top of it sits a theme system: colour calculation that derives
+a coherent palette from a small input, per-section assignment, fonts, corner
+radii.
+
+<Artifact caption="Section composition: ready layouts, the swappable primary element, and the configurable main block that slots into each one." ratio="16/9" />
+
+The result is worth stating flatly, because it is the whole design goal. People
+built beautiful pages easily, and could not build broken ones.
+
+<Artifact caption="The theme system: colour calculation from a small input set, per-section assignment, and the type and radius controls." ratio="4/3" />
 
 <Aside>
 
-TK — what I'd do differently. A mini case still owes the reader this one.
+The cost of this approach is real and should not be skipped over. A customer who
+genuinely needs something outside the boundaries has no path at all, and the
+design accepts that on purpose. What makes it defensible is that the boundaries
+were drawn from what customers were already building, and that the team kept
+moving them — see the method below. A constrained builder that nobody maintains
+becomes a straitjacket within a year.
 
 </Aside>
+
+This is the same principle I applied years later to review steps and to survey
+configuration. Primitives with boundaries, five years earlier, with commercial
+proof behind it.
+
+</Beat>
+
+<Beat n={4} title="Where the domain knowledge went">
+
+Three things mattered more than the rest.
+
+**Native page translation, first on the market.** DACH and Benelux meant most
+customers ran two or three languages and needed career sites in all of them. The
+common way to handle that is to treat a translation as a duplicate site, which
+forces every language to look the same and makes each one a separate maintenance
+burden. Here translation lived on the element: every element could carry a
+German version, and layouts and images could differ per language. Links
+translated separately, which had a useful consequence — a customer who did not
+want a translated page could build a genuinely different page in another
+language and translate only the links between them.
+
+<Artifact caption="A page in two languages: per-element translation, per-language layout and imagery, and link translation handled separately from content." ratio="16/9" />
+
+**Job prefiltering.** This one was my idea. A job section filters which jobs it
+shows, which turns one section type into many pages: German jobs here, Dutch
+there, each surrounded by team galleries, perk lists, a video from a team
+manager. The filter is a property of the placement rather than of the section,
+so composition comes for free. The evidence that the abstraction was right is
+that it extended later to internal pages and internal recruitment without being
+modified. A different audience and a different purpose, and the mechanism did
+not need to know.
+
+**Native cookie handling with no third parties.** Minimal cookies, cookieless
+analytics. On a careers site the visitor is a candidate, and asking a candidate
+to accept a wall of trackers before they can read about the job is a poor first
+impression made on the customer's behalf, in a context where the customer is
+trying to be liked.
+
+</Beat>
+
+<Beat n={5} title="What it did">
+
+The job-alert newsletter was built natively because customers were leaving to
+get it elsewhere. A visitor signs up and receives new jobs every few days, free.
+60% of companies adopted it.
+
+That was a defensive build. The feature existed elsewhere and customers were
+willing to move for it, which makes the adoption figure a measure of demand the
+product had been losing rather than demand it created.
+
+Over five years, roughly every third customer cited the builder as a reason for
+buying the ATS.
+
+The second number is the one that matters, and it is the harder thing to
+achieve. Adoption says an existing customer found a feature useful. A purchase
+reason says the builder was doing sales work: it was part of why the deal
+closed, for a third of the book, sustained over five years rather than during
+one good quarter.
+
+Customers also stayed, or declined to switch, because their site was built here.
+That is lock-in produced by value rather than by contract, and it is the only
+kind worth engineering for, because it survives the renewal conversation without
+anyone having to win it.
+
+### How customization requests were handled
+
+The team neither refused nor conceded. A request for custom CSS was treated as a
+measurement signal: a lot of customers are writing CSS, so go and read what they
+write. It was colour overrides and section reversal. Three concrete missing
+things, rather than a general appetite for freedom. The answer was subthemes and
+variants.
+
+The failure mode this avoids is common enough to be worth spelling out. A team
+sees the volume of workarounds, concludes that customers want flexibility, and
+builds a canvas, which is how you arrive back at the product this case opens
+with. The volume is the wrong signal. The content of the workaround is the
+signal, and it is usually a much shorter list than the volume suggests.
+
+<Pullquote>
+
+When customers work around your product, don't look at the fact that they do.
+Look at exactly what they patch. That's your backlog, written in their hand.
+
+</Pullquote>
+
+</Beat>
+
+<Beat n={6} title="The pause">
+
+The product did not stall and the strategy did not change. Another team needed
+their project overturned and took me onto it, and the builder was frozen to
+maintenance.
+
+What was ready and unreleased at that moment was substantial. A full block
+builder, with every section rewritten as a real block and every layout a genuine
+block layout, locked, with user-generated layouts planned next. Advanced themes
+and subthemes: each section able to use a different theme or an auto-generated
+variant, to override single colours from the library, or to use prepared
+subthemes for reversed and primary sections. The roadmap behind that held
+referrals, an intranet, and multiple sites.
+
+So the product was frozen at the point where it was in its strongest state and
+had the least pressure on it to be released.
+
+</Beat>
+
+<Beat n={7} title="What I'd do differently" final={true}>
+
+None of it shipped. It was ready. What was missing was a reason to ship it:
+there was no rush, and the team kept discussing the ideal version, because
+customers were delighted with what they already had.
+
+A product that works well generates no deadline, and so finished work can sit
+indefinitely. Customer satisfaction financed the delay.
+
+The asymmetry is what I would watch for now. A struggling product ships because
+it has to. A product people love ships when someone decides to, and if nobody is
+made responsible for deciding, the ideal version is always one conversation
+away. I would have set a release date early and defended it against my own
+appetite for a better version, which is the appetite that kept the work in the
+drawer.
+
+</Beat>
