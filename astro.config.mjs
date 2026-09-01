@@ -1,4 +1,5 @@
 // @ts-check
+import mdx from '@astrojs/mdx';
 import { defineConfig } from 'astro/config';
 
 // User site (maciejurban.github.io) → served from the domain root, so no `base`.
@@ -11,4 +12,5 @@ export default defineConfig({
   build: {
     format: 'directory',
   },
+  integrations: [mdx()],
 });
