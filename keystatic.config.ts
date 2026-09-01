@@ -1,4 +1,4 @@
-import { collection, config, fields } from '@keystatic/core';
+import { collection, config, fields, singleton } from '@keystatic/core';
 import { block, wrapper } from '@keystatic/core/content-components';
 
 import { THEMES } from './src/lib/themes';
@@ -90,8 +90,61 @@ export default config({
     brand: { name: 'Maciej Urban' },
     navigation: {
       Content: ['cases', 'essays'],
-      Site: ['sitePages'],
+      Site: ['sitePages', 'profile'],
     },
+  },
+
+  singletons: {
+    profile: singleton({
+      label: 'Profile',
+      /*
+       * Keystatic writes a data-only singleton to `<path>/index.json`, which is
+       * why src/content/site/profile/ is a directory rather than a bare
+       * profile.json. src/lib/profile.ts imports that path.
+       */
+      path: 'src/content/site/profile',
+      format: { data: 'json' },
+      schema: {
+        name: fields.text({ label: 'Name', validation: { isRequired: true } }),
+        role: fields.text({
+          label: 'Role line',
+          description: "e.g. 'Product designer, B2B HR-tech'.",
+          validation: { isRequired: true },
+        }),
+        spine: fields.text({
+          label: 'Spine line',
+          description:
+            'The one sentence the whole site hangs off. Shown on the home page and in the footer.',
+          multiline: true,
+          validation: { isRequired: true },
+        }),
+        identity: fields.text({
+          label: 'Identity paragraph',
+          description: 'Two sentences under the spine line on the home page.',
+          multiline: true,
+          validation: { isRequired: true },
+        }),
+        email: fields.text({
+          label: 'Email',
+          description:
+            'Leave starting with TK to keep it off the site entirely. Nothing renders a placeholder address.',
+          validation: { isRequired: true },
+        }),
+        links: fields.array(
+          fields.object({
+            label: fields.text({ label: 'Label' }),
+            url: fields.text({
+              label: 'URL',
+              description: 'Leave as TK and the link is hidden rather than rendered dead.',
+            }),
+          }),
+          {
+            label: 'Links',
+            itemLabel: (item) => item.fields.label.value || 'Link',
+          },
+        ),
+      },
+    }),
   },
 
   collections: {

@@ -134,25 +134,77 @@ published page can never link to something that does not exist in `dist`.
 ## Editing in Keystatic
 
 ```bash
-npm run dev
-# → http://localhost:4321/keystatic
+npm run cms
 ```
 
-Local storage mode: edits write MDX straight into `src/content/`, and you
-commit them like any other change. **The admin route is dev-only.** Keystatic's
-UI needs a server and GitHub Pages is static-only, so the integration is
-registered only when `astro dev` is running and there is no `/keystatic` in
-`dist`.
+Then keep two tabs open:
 
-`src/content/site/profile.json` (name, contact, links) is not in Keystatic —
-five values edited about once, closer to configuration than content.
+| | |
+|---|---|
+| `http://localhost:4321/keystatic` | the editor |
+| `http://localhost:4321/work/careershub` | the page you are editing, live |
+
+Saving in the editor writes the MDX file to disk, Astro's dev server reloads,
+and the second tab updates. There is no preview step and no publish step —
+**everything is editable this way**: all five cases, the essays, the About page,
+and Profile (your name, the spine line, contact and links).
+
+Drafts are visible in `npm run cms` and absent from `npm run build`, so
+`status: draft` is the way to work on something without it reaching the site.
+
+### What the editor gives you
+
+The body is a rich-text editor, not a code box. The four custom components are
+real blocks — insert them from the `+` menu and fill in their fields:
+
+- **Beat** — number, title, and the "closing beat" checkbox for beat 7
+- **Artifact** — caption and aspect ratio
+- **Aside**, **Pull quote** — content only
+
+Two things worth knowing:
+
+- Opening an entry and closing it again writes nothing. The parse round-trip is
+  stable, so there is no phantom diff just from looking.
+- The first time you *do* save a change to a case, Keystatic rewrites the whole
+  body in its own formatting — indentation inside `<Beat>`, explicit
+  `final={false}`. The prose is preserved exactly; the git diff is just large
+  once per file, and stable afterwards.
+
+### Dev-only, on purpose
+
+Keystatic's UI needs a server and GitHub Pages is static-only, so the
+integration is registered only while `astro dev` is running. There is no
+`/keystatic` in `dist` and no JavaScript from it on any page.
+
+That also means the editor is **this machine only**. Editing from a browser
+anywhere (or from a phone) needs `storage: { kind: 'github', repo: '...' }` in
+`keystatic.config.ts` plus the admin deployed somewhere that can run a server —
+a config change and one small deploy. The content model does not have to move.
+
+### Unused field
+
+`role` in Profile is not rendered by any page yet. It is there for a byline or
+an About header when you want one.
 
 ## Deploy
 
-Push to `main`. [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)
-builds with `withastro/action` and publishes with `actions/deploy-pages`. Pages
-is configured with **Build type: GitHub Actions** (not the legacy branch build).
-`workflow_dispatch` is enabled for a manual re-run.
+**Nothing publishes automatically.** maciejurban.github.io serves the 2021
+portfolio from the `master` branch; this rework lives on `main` and must not
+replace it by accident, so the workflow has no push trigger.
+
+To publish this site:
+
+```bash
+gh workflow run deploy.yml --ref main
+```
+
+…then switch Pages to the Actions build (Settings → Pages → Build and
+deployment → GitHub Actions). To go back to the 2021 site, switch Pages back to
+"Deploy from a branch" and pick `master`.
+
+[`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) builds with
+`withastro/action` and publishes with `actions/deploy-pages`. It runs on
+`workflow_dispatch` only.
 
 `public/.nojekyll` is required — without it GitHub Pages drops the `_astro/`
 directory, because Jekyll ignores underscore-prefixed paths, and every

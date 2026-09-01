@@ -11,7 +11,8 @@
     "preview": "astro preview",
     "astro": "astro",
     "check": "astro check",
-    "sync-fonts": "node scripts/sync-fonts.mjs"
+    "sync-fonts": "node scripts/sync-fonts.mjs",
+    "cms": "astro dev"
   },
   "dependencies": {
     "@astrojs/mdx": "^8.0.0",
