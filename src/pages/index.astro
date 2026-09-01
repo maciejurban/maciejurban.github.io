@@ -36,15 +36,28 @@ const teasers = essays.slice(0, 3);
       }
     </section>
 
-    <section class="home-section spine" aria-labelledby="how-i-think">
-      <h2 id="how-i-think" class="home-section__title">How I think</h2>
-      <ul class="home-list">
-        {teasers.map((essay) => <EssayListItem essay={essay} showDate={false} />)}
-      </ul>
-      <p class="structural home-section__more">
-        <a href={ROUTES.writing()}>All essays</a>
-      </p>
-    </section>
+    {
+      /*
+       * The essays are unwritten, so in a production build `teasers` is empty.
+       * A heading over an empty list reads as a bug rather than as a gap, so the
+       * whole section drops out until there is something to put in it.
+       */
+      teasers.length > 0 && (
+        <section class="home-section spine" aria-labelledby="how-i-think">
+          <h2 id="how-i-think" class="home-section__title">
+            How I think
+          </h2>
+          <ul class="home-list">
+            {teasers.map((essay) => (
+              <EssayListItem essay={essay} showDate={false} />
+            ))}
+          </ul>
+          <p class="structural home-section__more">
+            <a href={ROUTES.writing()}>All essays</a>
+          </p>
+        </section>
+      )
+    }
 
     <section class="home-section spine" aria-labelledby="home-work">
       <h2 id="home-work" class="home-section__title">Work</h2>
