@@ -1,0 +1,73 @@
+---
+import { ROUTES } from '../lib/links';
+import { hasRealEmail, profile, visibleLinks } from '../lib/profile';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="page site-footer__inner">
+    <p class="site-footer__spine">{profile.spine}</p>
+
+    <nav class="structural" aria-label="Elsewhere">
+      <ul>
+        {
+          hasRealEmail && (
+            <li>
+              <a href={`mailto:${profile.email}`}>{profile.email}</a>
+            </li>
+          )
+        }
+        {
+          visibleLinks.map((link) => (
+            <li>
+              <a href={link.url} rel="me noopener">
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+        <li><a href={ROUTES.rss()}>Essays feed</a></li>
+      </ul>
+    </nav>
+
+    <p class="structural muted site-footer__legal">{profile.name}, {year}</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: var(--space-8);
+    border-top: 1px solid var(--rule);
+  }
+
+  .site-footer__inner {
+    display: grid;
+    gap: var(--space-5);
+    padding-block: var(--space-6) var(--space-7);
+  }
+
+  .site-footer__spine {
+    max-width: 36ch;
+    font-size: var(--text-md);
+    line-height: var(--leading-tension);
+    text-wrap: pretty;
+  }
+
+  /*
+   * Stacked, not joined. A run of links separated by middle dots is the thing
+   * the brief specifically rules out, and stacking also keeps every target a
+   * comfortable size on a phone.
+   */
+  ul {
+    display: grid;
+    gap: var(--space-2);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .site-footer__legal {
+    color: var(--ink-muted);
+  }
+</style>

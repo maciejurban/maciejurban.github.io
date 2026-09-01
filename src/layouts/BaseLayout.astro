@@ -1,0 +1,85 @@
+---
+import SiteFooter from '../components/SiteFooter.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import { absoluteUrl, href } from '../lib/links';
+import { IS_PLACEHOLDER_CONTENT, SITE } from '../lib/site';
+import '../styles/global.css';
+
+type Props = {
+  title: string;
+  description?: string;
+  /** Rendered as-is when set; otherwise "<title> — <site name>". */
+  fullTitle?: string;
+};
+
+const { title, description = SITE.description, fullTitle } = Astro.props;
+
+const documentTitle = fullTitle ?? `${title} — ${SITE.title}`;
+const canonical = absoluteUrl(Astro.url.pathname);
+---
+
+<!doctype html>
+<html lang={SITE.lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{documentTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+
+    {
+      /*
+       * Phase 1 only. Placeholder copy is reachable so the routes exist, but it
+       * has no business in a search index. Flip IS_PLACEHOLDER_CONTENT in
+       * src/lib/site.ts when the real writing lands.
+       */
+      IS_PLACEHOLDER_CONTENT && <meta name="robots" content="noindex, nofollow" />
+    }
+
+    <link rel="icon" href={href('/favicon.svg')} type="image/svg+xml" />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title={`${SITE.title} — essays`}
+      href={href('/rss.xml')}
+    />
+
+    {/* Only the face used above the fold on every page. */}
+    <link
+      rel="preload"
+      href={href('/fonts/newsreader-latin-standard-normal.woff2')}
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={documentTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content={SITE.locale} />
+  </head>
+
+  <body>
+    <a class="visually-hidden skip-link" href="#main">Skip to content</a>
+    <SiteHeader pathname={Astro.url.pathname} />
+    <main id="main">
+      <slot />
+    </main>
+    <SiteFooter />
+  </body>
+</html>
+
+<style>
+  .skip-link:focus {
+    position: absolute;
+    inset-block-start: var(--space-2);
+    inset-inline-start: var(--space-2);
+    z-index: 10;
+    padding: var(--space-2) var(--space-3);
+    background: var(--paper);
+    outline: 2px solid var(--accent);
+    font-family: var(--font-structural);
+    font-size: var(--text-sm);
+  }
+</style>

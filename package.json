@@ -10,7 +10,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "check": "astro check"
+    "check": "astro check",
+    "sync-fonts": "node scripts/sync-fonts.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^8.0.0",
@@ -22,6 +23,8 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
+    "@fontsource-variable/atkinson-hyperlegible-next": "^5.3.0",
+    "@fontsource-variable/newsreader": "^5.3.0",
     "typescript": "^6.0.3"
   }
 }

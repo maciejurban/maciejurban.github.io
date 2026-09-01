@@ -1,0 +1,61 @@
+/*
+ * The whole design system. Five named colours; everything else is derived so
+ * the palette stays auditable in one place. See DESIGN-NOTES.md §2 for the
+ * measured contrast ratios.
+ */
+:root {
+  /* --- colour ------------------------------------------------------- */
+  --paper: #fbfbfc;
+  --ink: #14161b;
+  --ink-muted: #565c69;
+  --rule: #c9ccd4;
+  --accent: #1f5d4c;
+
+  --surface-sunk: color-mix(in oklab, var(--rule) 35%, var(--paper));
+  --rule-strong: color-mix(in oklab, var(--rule) 65%, var(--ink));
+  --accent-quiet: color-mix(in oklab, var(--accent) 22%, var(--paper));
+
+  /* --- type --------------------------------------------------------- */
+  --font-editorial: 'Newsreader', ui-serif, Georgia, 'Times New Roman', serif;
+  --font-structural: 'Atkinson Hyperlegible Next', ui-sans-serif, system-ui,
+    -apple-system, 'Segoe UI', sans-serif;
+
+  --text-xs: 0.8125rem;
+  --text-sm: 0.9375rem;
+  --text-base: 1.0625rem;
+  --text-md: 1.25rem;
+  --text-lg: 1.5rem;
+  --text-xl: 1.875rem;
+  --text-hero: clamp(2.25rem, 1.55rem + 2.9vw, 3.375rem);
+  --text-tension: clamp(1.6rem, 1.15rem + 1.9vw, 2.5rem);
+
+  --leading-body: 1.62;
+  --leading-tension: 1.35;
+  --leading-display: 1.22;
+
+  /* --- space -------------------------------------------------------- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 2rem;
+  --space-6: 3rem;
+  --space-7: 4rem;
+  --space-8: 6rem;
+
+  /* --- layout ------------------------------------------------------- */
+  --measure: 66ch;
+  --measure-narrow: 24ch;
+  --rail: 3.5rem;
+  --gutter: var(--space-4);
+  --page-max: 78rem;
+
+  /* The beat rail collapses below this; see global.css. */
+  --bp-rail: 48rem;
+}
+
+@media (min-width: 30rem) {
+  :root {
+    --gutter: var(--space-5);
+  }
+}

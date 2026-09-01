@@ -1,0 +1,105 @@
+---
+import { NAV_ITEMS } from '../lib/site';
+import { href, ROUTES } from '../lib/links';
+import { profile } from '../lib/profile';
+
+type Props = {
+  /** Path of the current page, used for aria-current. Pass Astro.url.pathname. */
+  pathname: string;
+};
+
+const { pathname } = Astro.props;
+
+const isCurrent = (path: string): boolean => {
+  const target = href(path);
+
+  return pathname === target || pathname.startsWith(`${target}/`);
+};
+---
+
+<header class="site-header">
+  <div class="page site-header__inner">
+    <a class="site-header__name" href={ROUTES.home()}>{profile.name}</a>
+
+    <nav class="structural" aria-label="Primary">
+      <ul>
+        {
+          NAV_ITEMS.map((item) => (
+            <li>
+              <a
+                href={href(item.path)}
+                aria-current={isCurrent(item.path) ? 'page' : undefined}
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .site-header__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-2) var(--space-5);
+    padding-block: var(--space-4);
+  }
+
+  .site-header__name {
+    font-size: var(--text-md);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .site-header__name:hover {
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-underline-offset: 0.18em;
+  }
+
+  ul {
+    display: flex;
+    gap: var(--space-4);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  @media (min-width: 30rem) {
+    ul {
+      gap: var(--space-5);
+    }
+  }
+
+  nav a {
+    text-decoration: none;
+    padding-block: var(--space-1);
+  }
+
+  nav a:hover {
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.3em;
+  }
+
+  /*
+   * The current page is marked with a solid accent underline rather than a
+   * colour change, so the signal survives at any contrast setting.
+   */
+  nav a[aria-current='page'] {
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.3em;
+  }
+</style>
