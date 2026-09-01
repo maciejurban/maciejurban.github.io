@@ -1,0 +1,31 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import { ROUTES } from '../lib/links';
+---
+
+<BaseLayout title="Page not found" description="That page does not exist.">
+  <div class="page spine">
+    <PageHeader
+      title="That page does not exist"
+      lede="Either the link is wrong, or it pointed at something that has since been unpublished."
+    />
+
+    <ul class="structural not-found__links">
+      <li><a href={ROUTES.home()}>Home</a></li>
+      <li><a href={ROUTES.work()}>Work</a></li>
+      <li><a href={ROUTES.writing()}>Writing</a></li>
+      <li><a href={ROUTES.about()}>About</a></li>
+    </ul>
+  </div>
+</BaseLayout>
+
+<style>
+  .not-found__links {
+    display: grid;
+    gap: var(--space-2);
+    margin-top: var(--space-5);
+    padding: 0;
+    list-style: none;
+  }
+</style>

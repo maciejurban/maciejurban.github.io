@@ -1,0 +1,202 @@
+---
+import { render } from 'astro:content';
+
+import BeatRail from '../../components/BeatRail.astro';
+import EntryMeta from '../../components/EntryMeta.astro';
+import Artifact from '../../components/mdx/Artifact.astro';
+import Aside from '../../components/mdx/Aside.astro';
+import Beat from '../../components/mdx/Beat.astro';
+import Pullquote from '../../components/mdx/Pullquote.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCases, getRelatedEssays, parseBeats } from '../../lib/content';
+import { formatTheme } from '../../lib/format';
+import { essayHref, ROUTES } from '../../lib/links';
+
+export const getStaticPaths = async () => {
+  const cases = await getCases();
+
+  return cases.map((caseEntry) => ({
+    params: { slug: caseEntry.id },
+    props: { caseEntry },
+  }));
+};
+
+const { caseEntry } = Astro.props;
+const { Content } = await render(caseEntry);
+
+const beats = parseBeats(caseEntry);
+const relatedEssays = await getRelatedEssays(caseEntry);
+const { title, tension, role, period, context, themes, kind, status } = caseEntry.data;
+---
+
+<BaseLayout title={title} description={caseEntry.data.summary}>
+  <article class="page case">
+    <div class="case__grid">
+      <div class="case__column">
+        <header class="case__header spine">
+          {
+            status === 'draft' && (
+              <p class="structural case__draft">Draft — placeholder content</p>
+            )
+          }
+
+          <h1>{title}</h1>
+
+          {/*
+            Beat 1. The tension is the hook, so it lives here and only here —
+            the body starts at beat 2. The accent rule lines up with the spine
+            that runs down the beats below it, which is what makes this read as
+            the first position in the sequence rather than a decorative lede.
+          */}
+          <section class="case__tension" id="beat-1" aria-label="Tension">
+            <span class="structural case__tension-n" aria-hidden="true">01</span>
+            <p>{tension}</p>
+          </section>
+
+          <EntryMeta
+            items={[
+              { label: 'Role', value: role },
+              { label: 'Period', value: period },
+              { label: 'Context', value: context },
+              { label: 'Format', value: kind === 'mini' ? 'Short case' : 'Case study' },
+              { label: 'Themes', value: themes.map(formatTheme) },
+            ]}
+          />
+        </header>
+
+        <div class="case__body spine prose">
+          <Content components={{ Beat, Artifact, Aside, Pullquote }} />
+        </div>
+
+        <footer class="case__footer spine">
+          {
+            relatedEssays.length > 0 && (
+              <nav class="case__related" aria-label="Related writing">
+                <h2 class="case__related-title">Related writing</h2>
+                <ul>
+                  {relatedEssays.map((essay) => (
+                    <li>
+                      <a href={essayHref(essay.id)}>{essay.data.title}</a>
+                      <p class="muted">{essay.data.dek}</p>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            )
+          }
+
+          <p class="structural"><a href={ROUTES.work()}>All work</a></p>
+        </footer>
+      </div>
+
+      <BeatRail beats={beats} />
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .case {
+    padding-block: var(--space-6) var(--space-7);
+  }
+
+  .case__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @media (min-width: 64rem) {
+    .case__grid {
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: var(--space-6);
+      align-items: start;
+    }
+  }
+
+  .case__column {
+    min-width: 0;
+  }
+
+  .case__draft {
+    margin-bottom: var(--space-4);
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  /* --- beat 1: the one bold place ----------------------------------- */
+
+  .case__tension {
+    position: relative;
+    max-width: var(--measure-narrow);
+    margin-block: var(--space-5) var(--space-6);
+    padding-left: var(--space-4);
+    border-left: 3px solid var(--accent);
+  }
+
+  .case__tension p {
+    max-width: none;
+    font-size: var(--text-tension);
+    line-height: var(--leading-tension);
+    letter-spacing: -0.01em;
+    text-wrap: pretty;
+  }
+
+  .case__tension-n {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: calc(var(--rail) * -1);
+    transform: translate(-50%, 0.35em);
+    color: var(--accent);
+    font-size: var(--text-xs);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media (max-width: 47.999rem) {
+    .case__tension-n {
+      display: none;
+    }
+  }
+
+  .case__header {
+    padding-bottom: var(--space-5);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  /* --- body ---------------------------------------------------------- */
+
+  /*
+   * Beat sections handle their own vertical rhythm and the spine rule, so the
+   * generic prose spacing is switched off between them.
+   */
+  .case__body :global(.beat + .beat) {
+    margin-top: 0;
+  }
+
+  .case__footer {
+    display: grid;
+    gap: var(--space-5);
+    margin-top: var(--space-7);
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--rule);
+  }
+
+  .case__related-title {
+    font-family: var(--font-structural);
+    font-size: var(--text-sm);
+    font-weight: 400;
+    color: var(--ink-muted);
+  }
+
+  .case__related ul {
+    display: grid;
+    gap: var(--space-4);
+    margin-top: var(--space-3);
+    padding: 0;
+    list-style: none;
+  }
+
+  .case__related p {
+    margin-top: var(--space-1);
+    max-width: var(--measure);
+  }
+</style>

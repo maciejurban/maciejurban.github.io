@@ -1,0 +1,41 @@
+---
+import EssayListItem from '../../components/EssayListItem.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getEssays } from '../../lib/content';
+
+const essays = await getEssays();
+---
+
+<BaseLayout
+  title="Writing"
+  description="Short essays on ownership, history as truth, and what AI output should actually be."
+>
+  <div class="page spine">
+    <PageHeader
+      title="Writing"
+      lede="Short arguments, mostly about the parts of a product that are decided before anyone opens a design tool."
+    />
+
+    {
+      essays.length > 0 ? (
+        <ul class="essay-list">
+          {essays.map((essay) => (
+            <EssayListItem essay={essay} />
+          ))}
+        </ul>
+      ) : (
+        <p class="muted">No published essays yet.</p>
+      )
+    }
+  </div>
+</BaseLayout>
+
+<style>
+  .essay-list {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    border-bottom: 1px solid var(--rule);
+  }
+</style>

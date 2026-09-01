@@ -296,12 +296,15 @@ Written out, one by one, against the brief's list.
    are identified by an accent underline with a `2px` offset. The featured-case
    link is the case title itself, not a "Read the case →" affordance.
 
-7. **Fade-and-slide-up entrance animation on every section.** No entrance
-   animation of any kind. The only motion in the build is the optional
-   scroll-driven highlight on the beat rail (CSS `animation-timeline: view()`,
-   no JS), and it is wrapped in `@media (prefers-reduced-motion: no-preference)`
-   so it does not exist for anyone who has asked it not to. Where the feature is
-   unsupported the rail simply shows no active state, which costs nothing.
+7. **Fade-and-slide-up entrance animation on every section.** There is no
+   animation in the build at all — no entrance transitions, no scroll-driven
+   effects, no `@keyframes`. The beat rail's active state is plain `:target`,
+   which makes it a URL fact rather than a scroll effect, so there is nothing to
+   degrade. A scroll-linked highlight was considered and dropped: driving it
+   across elements needs `timeline-scope`, which is one engine deep, and the
+   widely-supported version of the idea would have been decorative motion —
+   exactly what this item rules out. `prefers-reduced-motion: reduce` is still
+   honoured globally, as a floor rather than a fix.
 
 8. **A monospace face used decoratively for small labels.** No monospace in the
    design at all. Beat numbers, nav and captions are Atkinson Hyperlegible Next,

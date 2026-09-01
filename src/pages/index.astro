@@ -1,17 +1,135 @@
 ---
-// Phase 1, step 1: deliberately blank. Proving the deploy pipeline before any
-// content code exists. Replaced in step 6.
+import CaseListItem from '../components/CaseListItem.astro';
+import EssayListItem from '../components/EssayListItem.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCases, getEssays, getFeaturedCase } from '../lib/content';
+import { caseHref, ROUTES } from '../lib/links';
+import { profile } from '../lib/profile';
+
+/*
+ * Section order is deliberate: the reader never hits two heavy cases in a row.
+ * Hero → one featured case → three light essay teasers → the full case index →
+ * a closing paragraph.
+ */
+const featured = await getFeaturedCase();
+const cases = await getCases();
+const essays = await getEssays();
+
+const teasers = essays.slice(0, 3);
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Maciej Urban</title>
-  </head>
-  <body>
-    <main>
-      <h1>TK</h1>
-    </main>
-  </body>
-</html>
+<BaseLayout title={profile.name} fullTitle={`${profile.name} — product designer`}>
+  <div class="page">
+    <section class="hero spine" aria-labelledby="hero-spine">
+      <p class="hero__spine" id="hero-spine">{profile.spine}</p>
+      <p class="hero__identity">{profile.identity}</p>
+
+      {
+        featured && (
+          <div class="hero__featured">
+            <h2 class="hero__featured-title">
+              <a href={caseHref(featured.id)}>{featured.data.title}</a>
+            </h2>
+            <p class="hero__featured-tension">{featured.data.tension}</p>
+          </div>
+        )
+      }
+    </section>
+
+    <section class="home-section spine" aria-labelledby="how-i-think">
+      <h2 id="how-i-think" class="home-section__title">How I think</h2>
+      <ul class="home-list">
+        {teasers.map((essay) => <EssayListItem essay={essay} showDate={false} />)}
+      </ul>
+      <p class="structural home-section__more">
+        <a href={ROUTES.writing()}>All essays</a>
+      </p>
+    </section>
+
+    <section class="home-section spine" aria-labelledby="home-work">
+      <h2 id="home-work" class="home-section__title">Work</h2>
+      <ul class="home-list">
+        {cases.map((caseEntry) => <CaseListItem caseEntry={caseEntry} />)}
+      </ul>
+    </section>
+
+    <section class="home-section spine" aria-labelledby="home-closing">
+      <h2 id="home-closing" class="home-section__title">Closing</h2>
+      <p class="home-closing">
+        TK — one paragraph of about, in the first person, ending on what I am
+        looking for. It should be readable on its own by someone who has scrolled
+        this far and read nothing else.
+      </p>
+      <p class="structural home-section__more">
+        <a href={ROUTES.about()}>More about how I work</a>
+      </p>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .hero {
+    padding-block: var(--space-7) var(--space-6);
+  }
+
+  /*
+   * The one bold place on the home page, and the same treatment as beat 1 of a
+   * case: display serif, narrow measure so it breaks into short lines, accent
+   * rule hanging at the left.
+   */
+  .hero__spine {
+    max-width: var(--measure-narrow);
+    padding-left: var(--space-4);
+    border-left: 3px solid var(--accent);
+    font-size: var(--text-tension);
+    line-height: var(--leading-tension);
+    letter-spacing: -0.01em;
+    text-wrap: pretty;
+  }
+
+  .hero__identity {
+    margin-top: var(--space-5);
+    color: var(--ink-muted);
+    text-wrap: pretty;
+  }
+
+  .hero__featured {
+    margin-top: var(--space-6);
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--rule);
+  }
+
+  .hero__featured-title {
+    font-size: var(--text-lg);
+    font-weight: 600;
+  }
+
+  .hero__featured-tension {
+    margin-top: var(--space-2);
+    text-wrap: pretty;
+  }
+
+  .home-section {
+    padding-block: var(--space-6);
+  }
+
+  .home-section__title {
+    font-size: var(--text-md);
+    color: var(--ink-muted);
+  }
+
+  .home-list {
+    margin-top: var(--space-4);
+    padding: 0;
+    list-style: none;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .home-section__more {
+    margin-top: var(--space-4);
+  }
+
+  .home-closing {
+    margin-top: var(--space-4);
+  }
+</style>

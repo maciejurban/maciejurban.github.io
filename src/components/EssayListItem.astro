@@ -1,0 +1,66 @@
+---
+import type { EssayEntry } from '../lib/content';
+import { formatDate, isoDate } from '../lib/format';
+import { essayHref } from '../lib/links';
+
+type Props = {
+  essay: EssayEntry;
+  /** Home page teasers drop the date and lead with the argument. */
+  showDate?: boolean;
+};
+
+const { essay, showDate = true } = Astro.props;
+---
+
+<li class="essay-item">
+  <h3 class="essay-item__title">
+    <a href={essayHref(essay.id)}>{essay.data.title}</a>
+  </h3>
+  <p class="essay-item__dek">{essay.data.dek}</p>
+  {
+    (showDate || essay.data.status === 'draft') && (
+      <p class="structural muted essay-item__meta">
+        {essay.data.status === 'draft' && <span class="essay-item__draft">Draft</span>}
+        {showDate && (
+          <time datetime={isoDate(essay.data.published)}>
+            {formatDate(essay.data.published)}
+          </time>
+        )}
+      </p>
+    )
+  }
+</li>
+
+<style>
+  .essay-item {
+    padding-block: var(--space-4);
+    border-top: 1px solid var(--rule);
+  }
+
+  .essay-item__title {
+    font-size: var(--text-md);
+    font-weight: 600;
+  }
+
+  .essay-item__title a {
+    text-decoration-color: var(--accent);
+  }
+
+  .essay-item__dek {
+    margin-top: var(--space-2);
+    color: var(--ink-muted);
+    text-wrap: pretty;
+  }
+
+  .essay-item__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-4);
+    margin-top: var(--space-2);
+  }
+
+  .essay-item__draft {
+    color: var(--accent);
+    font-weight: 700;
+  }
+</style>

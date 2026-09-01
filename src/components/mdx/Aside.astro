@@ -1,0 +1,29 @@
+---
+/**
+ * Counter-arguments and honest caveats. Sunk surface, indented, no icon and no
+ * "Note:" label — if the paragraph does not read as an aside on its own the
+ * problem is the paragraph.
+ */
+---
+
+<aside class="aside">
+  <slot />
+</aside>
+
+<style>
+  .aside {
+    max-width: var(--measure);
+    margin-block: var(--space-5);
+    padding: var(--space-4) var(--space-4) var(--space-4) var(--space-5);
+    background: var(--surface-sunk);
+    border-left: 2px solid var(--rule-strong);
+  }
+
+  .aside :global(p) {
+    max-width: none;
+  }
+
+  .aside :global(p + p) {
+    margin-top: var(--space-3);
+  }
+</style>

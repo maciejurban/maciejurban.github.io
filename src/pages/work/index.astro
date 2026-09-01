@@ -1,0 +1,44 @@
+---
+import CaseListItem from '../../components/CaseListItem.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCases } from '../../lib/content';
+
+const cases = await getCases();
+---
+
+<BaseLayout
+  title="Work"
+  description="Case studies on review workflows, skills models and survey data — the rules underneath the interface."
+>
+  <div class="page spine">
+    <PageHeader
+      title="Work"
+      lede="Three long cases and two short ones. Each opens with the tension rather than the product, because the tension is the part that transfers."
+    />
+
+    {
+      cases.length > 0 ? (
+        <ul class="case-list">
+          {cases.map((caseEntry) => (
+            <CaseListItem caseEntry={caseEntry} />
+          ))}
+        </ul>
+      ) : (
+        <p class="muted">
+          No published cases yet. Every case is still a draft, so they are visible in
+          development and absent from the built site.
+        </p>
+      )
+    }
+  </div>
+</BaseLayout>
+
+<style>
+  .case-list {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    border-bottom: 1px solid var(--rule);
+  }
+</style>

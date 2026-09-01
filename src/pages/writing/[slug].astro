@@ -1,0 +1,127 @@
+---
+import { render } from 'astro:content';
+
+import Aside from '../../components/mdx/Aside.astro';
+import Pullquote from '../../components/mdx/Pullquote.astro';
+import EntryMeta from '../../components/EntryMeta.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getEssays, getReadingTime, getRelatedCases } from '../../lib/content';
+import { formatDate, formatTheme, isoDate } from '../../lib/format';
+import { caseHref, ROUTES } from '../../lib/links';
+
+export const getStaticPaths = async () => {
+  const essays = await getEssays();
+
+  return essays.map((essay) => ({ params: { slug: essay.id }, props: { essay } }));
+};
+
+const { essay } = Astro.props;
+const { Content } = await render(essay);
+
+const relatedCases = await getRelatedCases(essay);
+const readingTime = getReadingTime(essay);
+---
+
+<BaseLayout title={essay.data.title} description={essay.data.dek}>
+  <article class="page spine essay">
+    <header class="essay__header">
+      <p class="structural muted essay__kicker">
+        {essay.data.status === 'draft' && <span class="essay__draft">Draft</span>}
+        <time datetime={isoDate(essay.data.published)}>
+          {formatDate(essay.data.published)}
+        </time>
+        <span>{readingTime} min read</span>
+      </p>
+
+      <h1>{essay.data.title}</h1>
+      <p class="essay__dek">{essay.data.dek}</p>
+    </header>
+
+    <div class="prose">
+      <Content components={{ Aside, Pullquote }} />
+    </div>
+
+    <footer class="essay__footer">
+      <EntryMeta items={[{ label: 'Themes', value: essay.data.themes.map(formatTheme) }]} />
+
+      {
+        relatedCases.length > 0 && (
+          <nav class="essay__related" aria-label="Related work">
+            <h2 class="essay__related-title">Related work</h2>
+            <ul>
+              {relatedCases.map((relatedCase) => (
+                <li>
+                  <a href={caseHref(relatedCase.id)}>{relatedCase.data.title}</a>
+                  <p class="muted">{relatedCase.data.tension}</p>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )
+      }
+
+      <p class="structural"><a href={ROUTES.writing()}>All essays</a></p>
+    </footer>
+  </article>
+</BaseLayout>
+
+<style>
+  .essay {
+    padding-block: var(--space-6) var(--space-7);
+  }
+
+  .essay__kicker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-4);
+    margin-bottom: var(--space-4);
+  }
+
+  .essay__draft {
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .essay__header {
+    padding-bottom: var(--space-5);
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: var(--space-6);
+  }
+
+  .essay__dek {
+    max-width: 40ch;
+    margin-top: var(--space-4);
+    font-size: var(--text-md);
+    line-height: var(--leading-tension);
+    color: var(--ink-muted);
+    text-wrap: pretty;
+  }
+
+  .essay__footer {
+    display: grid;
+    gap: var(--space-5);
+    margin-top: var(--space-7);
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--rule);
+  }
+
+  .essay__related-title {
+    font-family: var(--font-structural);
+    font-size: var(--text-sm);
+    font-weight: 400;
+    color: var(--ink-muted);
+  }
+
+  .essay__related ul {
+    display: grid;
+    gap: var(--space-4);
+    margin-top: var(--space-3);
+    padding: 0;
+    list-style: none;
+  }
+
+  .essay__related p {
+    margin-top: var(--space-1);
+    max-width: var(--measure);
+  }
+</style>

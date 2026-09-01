@@ -1,0 +1,72 @@
+---
+import type { CaseEntry } from '../lib/content';
+import { caseHref } from '../lib/links';
+
+type Props = {
+  caseEntry: CaseEntry;
+};
+
+const { caseEntry } = Astro.props;
+---
+
+<li class="case-item">
+  {/*
+    The number is the manual `order` field, not decoration: it is the sequence
+    the cases are meant to be read in, and it is the same numbering language
+    the beat rail uses inside a case.
+  */}
+  <span class="structural case-item__order" aria-hidden="true">
+    {String(caseEntry.data.order).padStart(2, '0')}
+  </span>
+
+  <div class="case-item__body">
+    <h3 class="case-item__title">
+      <a href={caseHref(caseEntry.id)}>{caseEntry.data.title}</a>
+    </h3>
+    <p class="case-item__tension">{caseEntry.data.tension}</p>
+    <p class="structural muted case-item__meta">
+      {caseEntry.data.kind === 'mini' ? 'Short case' : 'Case study'}
+      {caseEntry.data.status === 'draft' && <span class="case-item__draft">Draft</span>}
+    </p>
+  </div>
+</li>
+
+<style>
+  .case-item {
+    display: grid;
+    grid-template-columns: 2.5rem 1fr;
+    gap: var(--space-3);
+    padding-block: var(--space-5);
+    border-top: 1px solid var(--rule);
+  }
+
+  .case-item__order {
+    color: var(--accent);
+    font-size: var(--text-xs);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.9;
+  }
+
+  .case-item__title {
+    font-size: var(--text-lg);
+    font-weight: 600;
+  }
+
+  .case-item__tension {
+    margin-top: var(--space-2);
+    text-wrap: pretty;
+  }
+
+  .case-item__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-4);
+    margin-top: var(--space-3);
+  }
+
+  .case-item__draft {
+    color: var(--accent);
+    font-weight: 700;
+  }
+</style>

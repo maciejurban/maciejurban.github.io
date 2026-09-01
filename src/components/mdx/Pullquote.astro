@@ -1,0 +1,26 @@
+---
+/**
+ * No quotation marks and no attribution slot: this is the author's own
+ * sentence lifted out of the flow, not a quote from someone else.
+ */
+---
+
+<blockquote class="pullquote">
+  <slot />
+</blockquote>
+
+<style>
+  .pullquote {
+    max-width: 34ch;
+    margin-block: var(--space-6);
+    padding-left: var(--space-4);
+    border-left: 2px solid var(--accent);
+    font-size: var(--text-md);
+    line-height: var(--leading-tension);
+    text-wrap: pretty;
+  }
+
+  .pullquote :global(p) {
+    max-width: none;
+  }
+</style>

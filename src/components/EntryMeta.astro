@@ -1,0 +1,74 @@
+---
+/**
+ * Case and essay metadata as a definition list: label in the structural sans,
+ * value in the editorial serif, one pair per row.
+ *
+ * Not a single line of values joined with middle dots. That reads as decoration
+ * pretending to be information, and it collapses badly at 360px.
+ */
+type MetaItem = {
+  label: string;
+  /** Rendered one per line when an array. */
+  value: string | string[];
+};
+
+type Props = {
+  items: MetaItem[];
+};
+
+const { items } = Astro.props;
+
+const shown = items.filter(
+  (item) => (Array.isArray(item.value) ? item.value.length > 0 : item.value.trim().length > 0),
+);
+---
+
+<dl class="meta">
+  {
+    shown.map((item) => (
+      <div class="meta__row">
+        <dt class="structural">{item.label}</dt>
+        <dd>
+          {Array.isArray(item.value)
+            ? item.value.map((line) => <span class="meta__line">{line}</span>)
+            : item.value}
+        </dd>
+      </div>
+    ))
+  }
+</dl>
+
+<style>
+  .meta {
+    display: grid;
+    gap: var(--space-2);
+    max-width: var(--measure);
+    margin: 0;
+  }
+
+  .meta__row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  @media (min-width: 30rem) {
+    .meta__row {
+      grid-template-columns: 7.5rem 1fr;
+      gap: var(--space-3);
+      align-items: baseline;
+    }
+  }
+
+  dt {
+    color: var(--ink-muted);
+  }
+
+  dd {
+    margin: 0;
+  }
+
+  .meta__line {
+    display: block;
+  }
+</style>

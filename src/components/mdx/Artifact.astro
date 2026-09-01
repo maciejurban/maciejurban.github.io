@@ -1,0 +1,59 @@
+---
+/**
+ * A labelled empty frame with a caption slot and a real aspect ratio.
+ *
+ * Deliberately not a fake screenshot: the layout needs to be honest about how
+ * much room the artifact takes and where the caption sits, and a plausible-
+ * looking invented diagram would be a fabricated fact in image form.
+ */
+type Props = {
+  caption: string;
+  /** CSS aspect-ratio value, e.g. '16/9' or '4/3'. */
+  ratio?: string;
+};
+
+const { caption, ratio = '16/9' } = Astro.props;
+---
+
+<figure class="artifact">
+  <div class="artifact__frame" style={`--artifact-ratio: ${ratio}`}>
+    <span class="artifact__label structural">Artifact placeholder</span>
+    <span class="artifact__ratio structural">{ratio.replace('/', ' : ')}</span>
+  </div>
+  <figcaption class="artifact__caption structural">{caption}</figcaption>
+</figure>
+
+<style>
+  .artifact {
+    max-width: var(--measure);
+    margin-block: var(--space-5);
+  }
+
+  .artifact__frame {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: var(--artifact-ratio);
+    /* The one radius on the site: without it the dashed rule reads as a bug. */
+    border: 1px dashed var(--rule-strong);
+    border-radius: 2px;
+    background: var(--surface-sunk);
+    color: var(--ink-muted);
+  }
+
+  .artifact__label {
+    font-weight: 600;
+  }
+
+  .artifact__ratio {
+    font-size: var(--text-xs);
+  }
+
+  .artifact__caption {
+    margin-top: var(--space-3);
+    color: var(--ink-muted);
+    text-wrap: pretty;
+  }
+</style>

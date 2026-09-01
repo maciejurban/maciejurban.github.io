@@ -161,3 +161,46 @@ a:hover {
     scroll-behavior: auto !important;
   }
 }
+
+/* --- long-form prose ------------------------------------------------ */
+
+/*
+ * Applied to the wrapper around rendered MDX. Element selectors rather than
+ * classes, because the markdown pipeline emits plain elements.
+ */
+.prose > * + * {
+  margin-top: var(--space-4);
+}
+
+.prose > h2 {
+  margin-top: var(--space-6);
+}
+
+.prose > h3 {
+  margin-top: var(--space-5);
+}
+
+.prose ul,
+.prose ol {
+  padding-left: var(--space-4);
+}
+
+.prose li + li {
+  margin-top: var(--space-2);
+}
+
+.prose li::marker {
+  color: var(--ink-muted);
+}
+
+.prose ol > li::marker {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+}
+
+.prose hr {
+  height: 1px;
+  margin-block: var(--space-6);
+  border: 0;
+  background: var(--rule);
+}

@@ -1,0 +1,135 @@
+---
+/**
+ * One of the seven beats of a case study.
+ *
+ * The number hangs in the rail gutter, sitting on the spine rule, so the beats
+ * read as marked positions on one line rather than as a stack of sections.
+ * Beat 1 is the tension block in the page header — it is the hook, so it is
+ * numbered on the rail but never repeated here, which is why case bodies start
+ * at n={2}.
+ */
+type Props = {
+  n: number;
+  title: string;
+  /**
+   * The closing "what I'd do differently" beat. The spine stops, and the beat
+   * moves onto a sunk surface across the full column: it is the one section
+   * that steps outside the sequence and looks back at it.
+   */
+  final?: boolean;
+};
+
+const { n, title, final = false } = Astro.props;
+
+const headingId = `beat-${n}-title`;
+---
+
+<section
+  class:list={['beat', { 'beat--final': final }]}
+  id={`beat-${n}`}
+  aria-labelledby={headingId}
+>
+  <span class="beat__marker structural" aria-hidden="true">
+    {String(n).padStart(2, '0')}
+  </span>
+  <h2 class="beat__title" id={headingId}>{title}</h2>
+  <div class="beat__body">
+    <slot />
+  </div>
+</section>
+
+<style>
+  .beat {
+    position: relative;
+    padding-block: var(--space-6);
+  }
+
+  /* The spine: one hairline running the length of the article. */
+  .beat::before {
+    content: '';
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: calc(var(--rail) * -1);
+    width: 1px;
+    background: var(--rule);
+  }
+
+  .beat__marker {
+    position: absolute;
+    inset-block-start: var(--space-6);
+    inset-inline-start: calc(var(--rail) * -1);
+    transform: translate(-50%, -0.15em);
+    padding-block: var(--space-1);
+    background: var(--paper);
+    color: var(--accent);
+    font-size: var(--text-xs);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .beat__title {
+    margin-bottom: var(--space-4);
+  }
+
+  /* The spine stops at the final beat, and the beat leaves the sequence. */
+  .beat--final {
+    margin-top: var(--space-5);
+    padding: var(--space-5) var(--gutter) var(--space-6);
+    background: var(--surface-sunk);
+  }
+
+  .beat--final::before {
+    display: none;
+  }
+
+  .beat--final .beat__marker {
+    position: static;
+    display: block;
+    transform: none;
+    margin-bottom: var(--space-2);
+    padding: 0;
+    background: none;
+  }
+
+  /*
+   * Clicking a rail link marks its beat. `:target` is the whole mechanism —
+   * no scroll observers, no JS, and nothing to fall back from.
+   */
+  .beat:target .beat__marker {
+    color: var(--paper);
+    background: var(--accent);
+    padding-inline: var(--space-2);
+  }
+
+  .beat--final:target .beat__marker {
+    display: inline-block;
+  }
+
+  /*
+   * Below the rail breakpoint --rail is 0, so the marker would sit on top of
+   * the heading. Move it inline above the title instead.
+   */
+  @media (max-width: 47.999rem) {
+    .beat__marker {
+      position: static;
+      display: block;
+      transform: none;
+      margin-bottom: var(--space-1);
+      padding: 0;
+      background: none;
+    }
+
+    .beat::before {
+      display: none;
+    }
+
+    .beat {
+      border-top: 1px solid var(--rule);
+      padding-block: var(--space-5);
+    }
+
+    .beat--final {
+      border-top: none;
+    }
+  }
+</style>

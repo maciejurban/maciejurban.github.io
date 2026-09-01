@@ -95,3 +95,34 @@ export const getReadingTime = (essay: EssayEntry): number => {
 
   return Math.max(1, Math.round(words / WORDS_PER_MINUTE));
 };
+
+export type BeatRef = {
+  n: number;
+  title: string;
+  /** Anchor id, matching the one Beat.astro renders. */
+  id: string;
+};
+
+const BEAT_PATTERN = /<Beat\s+n=\{(\d+)\}\s+title="([^"]*)"/g;
+
+/**
+ * The beat rail is built by reading the beats out of the MDX body rather than
+ * from a hardcoded list, so the navigation can never drift from the content.
+ *
+ * Beat 1 is prepended: it is the tension block in the page header, numbered on
+ * the rail but not written in the body, so there is exactly one copy of the
+ * hook. Mini cases have no `<Beat>` tags at all and get an empty rail.
+ */
+export const parseBeats = (caseEntry: CaseEntry): BeatRef[] => {
+  const matches = [...(caseEntry.body ?? '').matchAll(BEAT_PATTERN)];
+
+  if (matches.length === 0) return [];
+
+  const bodyBeats = matches.map((match) => ({
+    n: Number(match[1]),
+    title: match[2],
+    id: `beat-${match[1]}`,
+  }));
+
+  return [{ n: 1, title: 'Tension', id: 'beat-1' }, ...bodyBeats];
+};

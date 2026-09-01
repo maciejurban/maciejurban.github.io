@@ -1,0 +1,75 @@
+---
+import { render } from 'astro:content';
+
+import Aside from '../components/mdx/Aside.astro';
+import Pullquote from '../components/mdx/Pullquote.astro';
+import PageHeader from '../components/PageHeader.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getSitePage } from '../lib/content';
+import { hasRealEmail, profile, visibleLinks } from '../lib/profile';
+
+const about = await getSitePage('about');
+
+if (!about) {
+  throw new Error(
+    'src/content/site/about.mdx is missing or is a draft. The /about route cannot be built without it.',
+  );
+}
+
+const { Content } = await render(about);
+---
+
+<BaseLayout title="About" description={about.data.description ?? profile.spine}>
+  <div class="page spine">
+    <PageHeader title="About" />
+
+    <div class="prose">
+      <Content components={{ Aside, Pullquote }} />
+    </div>
+
+    <section class="about__contact" aria-labelledby="about-contact-title">
+      <h2 id="about-contact-title" class="about__contact-title">Get in touch</h2>
+      <ul class="structural">
+        {
+          hasRealEmail && (
+            <li>
+              <a href={`mailto:${profile.email}`}>{profile.email}</a>
+            </li>
+          )
+        }
+        {
+          visibleLinks.map((link) => (
+            <li>
+              <a href={link.url} rel="me noopener">
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .about__contact {
+    margin-top: var(--space-7);
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--rule);
+  }
+
+  .about__contact-title {
+    font-family: var(--font-structural);
+    font-size: var(--text-sm);
+    font-weight: 400;
+    color: var(--ink-muted);
+  }
+
+  ul {
+    display: grid;
+    gap: var(--space-2);
+    margin-top: var(--space-3);
+    padding: 0;
+    list-style: none;
+  }
+</style>
