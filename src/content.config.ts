@@ -2,22 +2,7 @@ import { glob } from 'astro/loaders';
 import { defineCollection, reference } from 'astro:content';
 import { z } from 'zod';
 
-/**
- * Closed vocabulary. Five throughlines plus one cross-cutting theme.
- * Adding to this list is a deliberate editorial decision, not a shortcut —
- * a Zod enum means an invented theme fails the build instead of quietly
- * creating a one-item category.
- */
-export const THEMES = [
-  'history-as-truth',
-  'ownership-and-teams',
-  'flexibility-cost',
-  'medium-that-ships',
-  'ai-and-structure',
-  'semantics-before-ui',
-] as const;
-
-export type Theme = (typeof THEMES)[number];
+import { THEMES } from './lib/themes';
 
 const themeSchema = z.enum(THEMES);
 

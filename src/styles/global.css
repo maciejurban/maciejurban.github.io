@@ -113,14 +113,31 @@ a:hover {
  * The layout every long-form page uses. `--rail` is the gutter the beat
  * numbers hang in; the text column is capped at the reading measure so it
  * never widens past it on large screens.
+ *
+ * The flexible tracks on both sides centre the column on pages that have
+ * nothing in the margins, and collapse to almost nothing on a case page, where
+ * the beat rail has already taken the space to the right. The column therefore
+ * sits in roughly the same place on every page without either layout needing
+ * to know about the other.
  */
 .spine {
   display: grid;
-  grid-template-columns: var(--rail) minmax(0, var(--measure)) 1fr;
+  /*
+   * `min()` rather than `minmax(0, …)`: a minmax track sizes to its content
+   * when the content is narrower than the max, which silently shifts the
+   * column right on sections with short lines (the footer, the related list)
+   * and breaks alignment down the page. `min()` is a fixed breadth, so every
+   * section starts on the same vertical.
+   */
+  grid-template-columns:
+    1fr
+    var(--rail)
+    min(var(--measure), 100% - var(--rail))
+    1fr;
 }
 
 .spine > * {
-  grid-column: 2;
+  grid-column: 3;
 }
 
 @media (max-width: 47.999rem) {

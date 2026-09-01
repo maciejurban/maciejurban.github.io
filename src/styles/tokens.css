@@ -48,7 +48,7 @@
   --measure-narrow: 24ch;
   --rail: 3.5rem;
   --gutter: var(--space-4);
-  --page-max: 78rem;
+  --page-max: 68rem;
 
   /* The beat rail collapses below this; see global.css. */
   --bp-rail: 48rem;

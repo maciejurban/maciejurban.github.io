@@ -124,20 +124,30 @@ const { title, tension, role, period, context, themes, kind, status } = caseEntr
 
   /* --- beat 1: the one bold place ----------------------------------- */
 
+  /*
+   * The font-size lives on the container, not the paragraph, because
+   * --measure-narrow is in `ch`: on the paragraph it would resolve against the
+   * container's 17px and give a box five characters wide.
+   */
   .case__tension {
     position: relative;
     max-width: var(--measure-narrow);
     margin-block: var(--space-5) var(--space-6);
     padding-left: var(--space-4);
     border-left: 3px solid var(--accent);
+    font-size: var(--text-tension);
   }
 
   .case__tension p {
     max-width: none;
-    font-size: var(--text-tension);
+    font-size: inherit;
     line-height: var(--leading-tension);
     letter-spacing: -0.01em;
     text-wrap: pretty;
+  }
+
+  .case__tension-n {
+    font-size: var(--text-xs);
   }
 
   .case__tension-n {
@@ -174,7 +184,9 @@ const { title, tension, role, period, context, themes, kind, status } = caseEntr
 
   .case__footer {
     display: grid;
-    gap: var(--space-5);
+    /* row-gap, not gap: this element is a .spine grid and a column gap would
+       push its content out of alignment with the rest of the page. */
+    row-gap: var(--space-5);
     margin-top: var(--space-7);
     padding-top: var(--space-5);
     border-top: 1px solid var(--rule);

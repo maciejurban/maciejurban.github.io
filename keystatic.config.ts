@@ -1,7 +1,7 @@
 import { collection, config, fields } from '@keystatic/core';
 import { block, wrapper } from '@keystatic/core/content-components';
 
-import { THEMES } from './src/content.config';
+import { THEMES } from './src/lib/themes';
 
 /**
  * Keystatic runs in `local` storage mode and its routes are injected only when

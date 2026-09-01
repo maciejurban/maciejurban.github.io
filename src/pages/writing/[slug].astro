@@ -99,7 +99,9 @@ const readingTime = getReadingTime(essay);
 
   .essay__footer {
     display: grid;
-    gap: var(--space-5);
+    /* row-gap, not gap: this element is a .spine grid and a column gap would
+       push its content out of alignment with the rest of the page. */
+    row-gap: var(--space-5);
     margin-top: var(--space-7);
     padding-top: var(--space-5);
     border-top: 1px solid var(--rule);
