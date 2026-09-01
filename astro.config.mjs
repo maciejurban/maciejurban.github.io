@@ -27,7 +27,14 @@ export default defineConfig({
   output: 'static',
   trailingSlash: 'never',
   build: {
-    format: 'directory',
+    /*
+     * `file`, not `directory`. With directory output GitHub Pages serves
+     * /work/index.html and 301-redirects /work → /work/, so every internal
+     * link — all of which are written without a trailing slash, per
+     * trailingSlash: 'never' — costs a redirect hop. `file` emits work.html,
+     * which Pages serves at /work directly.
+     */
+    format: 'file',
   },
   integrations: [mdx(), ...(isDevServer ? [react(), keystatic()] : [])],
 });

@@ -1,6 +1,6 @@
 ---
 import { NAV_ITEMS } from '../lib/site';
-import { href, ROUTES } from '../lib/links';
+import { href, normalisePath, ROUTES } from '../lib/links';
 import { profile } from '../lib/profile';
 
 type Props = {
@@ -10,10 +10,12 @@ type Props = {
 
 const { pathname } = Astro.props;
 
+const current = normalisePath(pathname);
+
 const isCurrent = (path: string): boolean => {
   const target = href(path);
 
-  return pathname === target || pathname.startsWith(`${target}/`);
+  return current === target || current.startsWith(`${target}/`);
 };
 ---
 

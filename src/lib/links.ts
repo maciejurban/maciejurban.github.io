@@ -28,9 +28,28 @@ export const href = (path: string): string => {
   return `${base}${suffix}`;
 };
 
+/**
+ * Normalise a served path back to its canonical route.
+ *
+ * The build emits `file` format, so `Astro.url.pathname` is `/work.html` in the
+ * build and `/work` in dev. Everything that compares or publishes a path —
+ * canonical tags, OG urls, the nav's aria-current — has to see the same string
+ * in both, or the deployed site advertises URLs that its own links never use.
+ */
+export const normalisePath = (pathname: string): string => {
+  const withoutIndex = pathname.replace(/\/index\.html$/, '/');
+  const withoutExtension = withoutIndex.replace(/\.html$/, '');
+
+  if (withoutExtension === '') return '/';
+
+  return withoutExtension.length > 1 && withoutExtension.endsWith('/')
+    ? withoutExtension.slice(0, -1)
+    : withoutExtension;
+};
+
 /** Fully-qualified URL, for canonical tags, RSS items and OG metadata. */
 export const absoluteUrl = (path: string): string =>
-  isExternal(path) ? path : new URL(href(path), SITE_ORIGIN).toString();
+  isExternal(path) ? path : new URL(normalisePath(href(path)), SITE_ORIGIN).toString();
 
 export const caseHref = (slug: string): string => href(`/work/${slug}`);
 
