@@ -1,0 +1,12 @@
+{
+  "name": "Maciej Urban",
+  "role": "TK — role line, e.g. 'Product designer, B2B HR-tech'",
+  "spine": "I design the rules behind the interface — what happens when data, people, or org policy change halfway through the workflow.",
+  "identity": "TK — two sentences under the spine line on the home page. Who this is for and what they get.",
+  "email": "TK@TK.TK",
+  "links": [
+    { "label": "GitHub", "url": "https://github.com/maciejurban" },
+    { "label": "LinkedIn", "url": "TK" },
+    { "label": "CV (PDF)", "url": "TK" }
+  ]
+}
